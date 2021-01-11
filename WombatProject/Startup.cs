@@ -39,7 +39,7 @@ namespace WombatLibrarianApi
                                   });
             });
             services.AddScoped<BookAPIService, GoogleBooksAPIService>();
-            services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
+            services.AddDbContext<WombatBooksContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("MyDatabaseConnection")));
             services.AddControllers();
         }
 
