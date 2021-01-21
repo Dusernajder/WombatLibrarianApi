@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace WombatLibrarianApi
 {
@@ -40,6 +41,8 @@ namespace WombatLibrarianApi
             });
             services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
             services.AddDbContext<WombatBooksContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("databaseConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<WombatBooksContext>();
             services.AddControllers();
             services.AddSwaggerGen();
         }
@@ -59,6 +62,8 @@ namespace WombatLibrarianApi
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
