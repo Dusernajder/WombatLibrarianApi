@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace WombatLibrarianApi.Models
 {
-    public class WombatBooksContext : DbContext
+    public class WombatBooksContext : IdentityDbContext
     {
         public WombatBooksContext(DbContextOptions<WombatBooksContext> options, IConfiguration configuration) : base(options)
         {
