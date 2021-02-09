@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
 using WombatLibrarianApi.Models;
 using WombatLibrarianApi.Services;
+using WombatLibrarianApi.Settings;
+using System.Net.Http;
 
 namespace WombatLibrarianApi
 {
@@ -30,6 +23,7 @@ namespace WombatLibrarianApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GoogleApiSettings>(Configuration.GetSection("GoogleAPI"));
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -38,9 +32,12 @@ namespace WombatLibrarianApi
                                       builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                                   });
             });
-            services.AddScoped<BookAPIService, GoogleBooksAPIService>();
-            services.AddDbContext<WombatBooksContext>(opt => opt.UseInMemoryDatabase("WombatLibrarianData"));
+            services.AddScoped<IBookAPIService, GoogleBooksAPIService>();
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddDbContext<WombatBooksContext>();
             services.AddControllers();
+            services.AddHttpClient();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +60,9 @@ namespace WombatLibrarianApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("../swagger/v1/swagger.json", "New application"); });
         }
     }
 }

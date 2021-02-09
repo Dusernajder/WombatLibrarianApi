@@ -10,19 +10,18 @@ namespace WombatLibrarianApi.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly BookAPIService _apiService;
+        private readonly IBookAPIService _apiService;
 
-        public AuthorController(BookAPIService service)
+        public AuthorController(IBookAPIService service)
         {
             _apiService = service;
         }
 
         // GET: api/Author/<authorname>
         [HttpGet("{author}")]
-        public async Task<ActionResult<IEnumerable<Book>>> GetAuthorBookItems(string author)
+        public async Task<ActionResult<IEnumerable<BookItem>>> GetAuthorBookItems(string author)
         {
-            await _apiService.GetAuthorBooks(author);
-            return _apiService.AuthorBookItems;
+            return Ok(await _apiService.GetAuthorBooksAsync(author));
         }
     }
 }
